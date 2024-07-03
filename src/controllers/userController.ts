@@ -6,28 +6,48 @@ import { User } from '../Entities/User';
 import bcrypt from 'bcrypt';
 import AppError from '../utils/AppError';
 import { registerSchema } from './validators/userValidator';
+require('dotenv').config({path: __dirname + '/../.env'})
+const DATABASE_URL = process.env.DATABASE_URI;
 
-export const registerUser =  async (req: Request, res: Response, next: NextFunction) => {
+export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Validate input
     const { error } = registerSchema.validate(req.body);
-    if (error) return next(new AppError(error.details[0].message, 400));
+    if (error) {
+      return next(new AppError(error.details[0].message, 400));
+    }
 
     const userRepository = AppDataSource.getRepository(User);
     const { username, email, password } = req.body;
 
     // Check if user already exists
-    const existingUser = await userRepository.findOne({ where: [{ email },{username}] });
-    if (existingUser) return next(new AppError('Email Or Username already in use', 400));
+    const existingUser = await userRepository.findOne({
+      where: [{ email }, { username }]
+    });
+    if (existingUser) {
+      return next(new AppError('Email or Username already in use', 400));
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
-    const user = userRepository.create({ username, email, passwordHash: hashedPassword });
+    // Hash the password
+    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await userRepository.save(user);
+    // Create new user
+    const newUser = userRepository.create({
+      username,
+      email,
+      passwordHash: hashedPassword
+    });
+
+    await userRepository.save(newUser);
+
     res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    next(new AppError('Error registering user', 500));
+  } catch (err) {
+    if (err instanceof Error) {
+      next(new AppError('Error registering user', 500, err));
+    } else {
+      next(new AppError('An unexpected error occurred', 500));
+    }
   }
 };
 
