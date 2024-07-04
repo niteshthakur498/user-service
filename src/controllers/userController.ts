@@ -2,12 +2,10 @@
 
 import { Request, Response, NextFunction } from 'express';
 import  AppDataSource  from '../config/data-source';
-import { User } from '../Entities/User';
+import { User } from '../entities/User';
 import bcrypt from 'bcrypt';
 import AppError from '../utils/AppError';
 import { registerSchema } from './validators/userValidator';
-require('dotenv').config({path: __dirname + '/../.env'})
-const DATABASE_URL = process.env.DATABASE_URI;
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

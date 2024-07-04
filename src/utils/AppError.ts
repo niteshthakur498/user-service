@@ -5,6 +5,7 @@ class AppError extends Error {
     public statusCode: number;
     public error : Error;
     public isOperational: boolean;
+    public stack: string;
   
     constructor(message: string, statusCode: number, error? : Error) {
       super(message);
@@ -13,6 +14,7 @@ class AppError extends Error {
       this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
       if (error && error.stack) {
         this.stack = `${this.stack}\nCaused by: ${error.stack}`;
+        console.log(error.stack);
       }
       this.isOperational = true;
   

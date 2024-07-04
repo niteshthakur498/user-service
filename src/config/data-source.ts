@@ -1,8 +1,6 @@
 import { DataSource } from "typeorm";
-require('dotenv').config({path: __dirname + '/../.env'})
-const DATABASE_URL = process.env.DATABASE_URI;
-
-console.log("HIIIIIIIII---"+DATABASE_URL);
+import path from "path";
+require('dotenv').config();
 
 
 const AppDataSource =  new DataSource({
@@ -10,7 +8,7 @@ const AppDataSource =  new DataSource({
     url: process.env.DATABASE_URI,
     logging: false,
     synchronize: true,
-    entities: ["./src/Entities/**/*.ts"],
+    entities: [`${__dirname}/../entities/**{.ts,.js}`],
     extra: {
         ssl: process.env.NODE_ENV === 'production' ? {
             rejectUnauthorized: false
