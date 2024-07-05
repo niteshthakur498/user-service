@@ -12,7 +12,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     // Validate input
     const { error } = registerSchema.validate(req.body);
     if (error) {
-      return next(new AppError(error.details[0].message, 400));
+      return next(new AppError(error.details[0].message, 401));
     }
 
     const userRepository = AppDataSource.getRepository(User);
@@ -23,7 +23,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
       where: [{ email }, { username }]
     });
     if (existingUser) {
-      return next(new AppError('Email or Username already in use', 400));
+      return next(new AppError('Conflict - User already exists with the provided Username/Email', 402));
     }
 
     // Hash the password
@@ -39,33 +39,14 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     await userRepository.save(newUser);
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({ message: 'User Registered Successfully' });
   } catch (err) {
     if (err instanceof Error) {
       next(new AppError('Error registering user', 500, err));
     } else {
-      next(new AppError('An unexpected error occurred', 500));
+      next(new AppError('Error registering user', 500));
     }
   }
 };
 
-
-// export const updateUserProfile = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const userRepository = AppDataSource.getRepository(User);
-//     const userId = req.params.id;
-//     const { username, email } = req.body;
-
-//     const user = await userRepository.findOneBy({ userId: Number(userId) });
-//     if (!user) return res.status(404).json({ message: 'User not found' });
-
-//     user.username = username;
-//     user.email = email;
-
-//     await userRepository.save(user);
-//     res.status(200).json({ message: 'Profile updated successfully' });
-//   } catch (error) {
-//     next(new AppError('Error registering user', 500));
-//   }
-// };
 

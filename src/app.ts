@@ -1,8 +1,6 @@
 import express, { Request, Response,Router } from 'express';
 import setupSwagger from './swagger';
-import userRoutes from './routes/userRoutes';
 import errorHandler from './middlewares/errorHandler';
-import authRoutes from './routes/authRoutes';
 // import profileRoutes from './routes/profileRoutes';
 
 
@@ -16,9 +14,7 @@ app.use(express.json()); // Body parser middleware
 
 
 // Routes
-app.use('/service/user/api', userRoutes);
-app.use('/service/auth/api', authRoutes);
-// app.use('/api/v1/profile', profileRoutes);
+app.use('/service/user/api', require('./routes/userServiceRoutes'));
 
 // Define a route handler for the default home page
 app.get('/', (req: Request, res: Response) => {

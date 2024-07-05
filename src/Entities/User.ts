@@ -13,4 +13,10 @@ export class User {
 
   @Column({name : "user_password"})
   passwordHash: string;
+
+  @Column({ nullable: true })
+  refreshToken: string; 
+
+  @Column({ nullable: true })
+  refreshTokenExpiry: Date;
 }
