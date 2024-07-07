@@ -4,11 +4,12 @@ const router = express.Router();
 
 // Import specific route modules
 import authRoutes from './authRoutes';
-//import profileRoutes from './profileRoutes';
+import profileRoutes from './profileRoutes';
 
 
 // Routes for different modules
+router.use('/profile', profileRoutes);
 router.use('/', authRoutes);
-//router.use('/profile', profileRoutes);
+
 
 module.exports = router;

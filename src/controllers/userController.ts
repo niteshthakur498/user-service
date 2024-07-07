@@ -6,6 +6,7 @@ import { User } from '../entities/User';
 import bcrypt from 'bcrypt';
 import AppError from '../utils/AppError';
 import { registerSchema } from './validators/userValidator';
+import { UserProfile } from '../entities/UserProfile';
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,6 +17,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     }
 
     const userRepository = AppDataSource.getRepository(User);
+    const userProfileRepository = AppDataSource.getRepository(UserProfile);
     const { username, email, password } = req.body;
 
     // Check if user already exists
@@ -37,9 +39,19 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
       passwordHash: hashedPassword
     });
 
-    await userRepository.save(newUser);
+
+    const savedUser = await userRepository.save(newUser);
+
+    const userProfile = userProfileRepository.create({
+      userId: savedUser.userId,
+      country: 'IND',
+      income: 0
+    });
+
+    await userProfileRepository.save(userProfile);
 
     res.status(201).json({ message: 'User Registered Successfully' });
+    
   } catch (err) {
     if (err instanceof Error) {
       next(new AppError('Error registering user', 500, err));

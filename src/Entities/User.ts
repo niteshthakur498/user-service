@@ -14,6 +14,9 @@ export class User {
   @Column({name : "user_password"})
   passwordHash: string;
 
+  @Column({default:'E'})//EnabledOrLockedOrDisables
+  userStatus: string;
+
   @Column({ nullable: true })
   refreshToken: string; 
 
