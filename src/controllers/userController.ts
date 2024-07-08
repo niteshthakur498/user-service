@@ -62,3 +62,22 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 };
 
 
+export const deactivateUserController = async (req: Request, res: Response, next: NextFunction) => {
+
+  const userRepository = AppDataSource.getRepository(User);
+  const user = await userRepository.findOne({where:{userId:(req as any).user.userId}});
+
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
+  user.userStatus = 'D';
+
+  await userRepository.save(user);
+
+  return res.status(201).json({ 
+    message:"User Deactivated Successfully.."
+   });
+};
+
+

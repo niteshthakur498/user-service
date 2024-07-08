@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { loginController, refreshTokenController } from '../controllers/authController';
-import { registerUser } from '../controllers/userController';
+import { deactivateUserController, registerUser } from '../controllers/userController';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 
@@ -39,6 +40,8 @@ const router = Router();
  *         description: Error registering user 
  */
 router.post('/register', registerUser);
+
+router.post('/deactivate', authMiddleware, deactivateUserController);
 
 /**
  * @swagger
@@ -82,6 +85,11 @@ router.post('/register', registerUser);
  *         description: Unauthorized - Invalid email or password
  */
 router.post('/login', loginController);
+
+
+
+
+router.post('/logout', loginController);
 
 /**
  * @swagger

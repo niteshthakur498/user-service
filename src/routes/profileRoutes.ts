@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
   });
 
 
-router.post('/', authMiddleware , updateProfileController);
+router.put('/', authMiddleware , updateProfileController);
 
 
 

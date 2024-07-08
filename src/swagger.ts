@@ -9,14 +9,14 @@ export default function setupSwagger(app: Express) {
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'Node.js TypeScript API with Swagger',
+        title: 'User Service Findoc',
         version: '1.0.0',
-        description: 'Sample API for Node.js TypeScript with Swagger',
+        description: 'Endpoints for API of User-Service',
       },
     },
     apis: ['./src/routes/*.ts'], // Path to your API routes
   };
 
   const specs = swaggerJsdoc(options);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+  app.use('/user-service/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 }

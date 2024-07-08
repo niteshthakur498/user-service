@@ -21,6 +21,18 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     return next(new AppError('User not found', 404));
   }
 
+
+  if(user.userStatus === 'D' || user.userStatus === 'L'){
+    let userStatus = '';
+    if(user.userStatus==='D'){
+      userStatus = 'Disabled';
+    }
+    else{
+      userStatus = 'Locked';
+    }
+    return next(new AppError(`User Status is ${userStatus}`, 404));
+  }
+
   const isPasswordValid = await bcrypt.compare(req.body.password, user.passwordHash);
   if (!isPasswordValid) {
     return next(new AppError('Invalid password', 401));
